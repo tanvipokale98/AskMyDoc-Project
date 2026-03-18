@@ -1,15 +1,15 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { publicApi } from '../../utils/api';
-
+import { notify } from '../../utils/toast';
 export const LoginPage = () => {
-
+        const navigate=useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
+
         e.preventDefault();
         setLoading(true);
 
@@ -21,13 +21,18 @@ export const LoginPage = () => {
                 password
 
             })
-
+           
 
             localStorage.setItem('token', res.data.token);
             localStorage.setItem('user', JSON.stringify(res.data.user));
+            notify(res.data.statusCode, res.data.message);
+            navigate('/dashboard');
 
         } catch (err) {
-            setError("Something went wrong. Please try again");
+          const status = err.response?.data?.statusCode || 500
+    const message = err.response?.data?.message || 'Something went wrong'
+    notify(status, message) 
+           
         } finally {
             setLoading(false);
         }
@@ -44,12 +49,12 @@ export const LoginPage = () => {
                     <p className="text-[#4a8fa8] text-sm mt-1">Sign in to your AskYourDoc account</p>
                 </div>
 
-                {/* Error message */}
+                {/* Error message
                 {error && (
                     <div className="mb-4 px-4 py-2.5 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
                         {error}
                     </div>
-                )}
+                )} */}
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="space-y-5">
