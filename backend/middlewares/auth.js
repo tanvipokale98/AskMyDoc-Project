@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import User from "../modals/UserModal";
+import User from "../modals/UserModal.js";
 
 const protect = async(req, res, next)=>{
 
@@ -8,8 +8,8 @@ if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
 
     try{ 
         token=req.headers.authorization.split(' ')[1];
-        const decoded=jwt.verify(process.env.JWT_SECRET_KEY)
-        const user= await User.findById(decoded.id).select(-password);
+        const decoded=jwt.verify(token,process.env.JWT_SECRET_KEY)
+        const user= await User.findById(decoded.id).select('-password');
         if(!user){
             return res.status(400).json({
                 statusCode:400,
@@ -17,7 +17,7 @@ if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
                 success:false
             })
         }
-
+        req.user=user;
 
         next();
     }catch(err){

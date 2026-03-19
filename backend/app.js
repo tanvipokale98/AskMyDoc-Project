@@ -6,7 +6,8 @@ import cors from 'cors';
 
 import AuthRoute from './routes/AuthRoutes.js'
 import errorHandler from './middlewares/errorHandler.js';
-
+import docuRoute from './routes/DocumentRoute.js'
+import dashboard from './routes/DashboardRoute.js';
 // server creation
 const app=express();
 
@@ -20,8 +21,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // routers
 app.use('/api/auth',AuthRoute);
-
-
+app.use('/api',docuRoute);
+app.use('/api',dashboard)
 // error handling middleware
 app.use(errorHandler);
 
