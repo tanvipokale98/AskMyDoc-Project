@@ -2,10 +2,10 @@ import Document from "../../modals/DocumentModal.js";
 import { textChunker } from "../../services/TextChunk.js";
 import { extractText } from "../../services/TextParser.js";
 import { generateEmbeddings } from "../../services/generateEmbeddings.js";
+import { generateSummary } from "../../services/generateSummary.js";
 import { storeChunks } from "../../services/storeEmbeddings.js";
 import path from 'path'
 export const uploadDoc = async (req, res,next)=>{
-  console.log("reached in docController");
     try{
 
         const id = req.user._id;
@@ -42,10 +42,12 @@ export const uploadDoc = async (req, res,next)=>{
         try{
             const texts=await extractText(filePath);
             const chunks=await textChunker(texts.text);
-
+            const summary = await generateSummary(texts.text.substring(0,10000));
             const resp=await Document.findByIdAndUpdate(doc._id,{
                 pageCount:texts.numPgs,
-                chunkCount: chunks.length
+                chunkCount: chunks.length,
+                summary:summary
+
             });
             
             const embeddings=await generateEmbeddings(chunks);

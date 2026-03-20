@@ -6,6 +6,9 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import DashboardPage from './pages/Dashboard/DashboardPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import DocumnetListPage from './pages/Document/DocumentListPage';
+import { DocumentPage } from './pages/Document/DocumentPage';
+import ProfilePage from './pages/Profile/ProfilePage';
 
 function App() {
  return(
@@ -24,6 +27,9 @@ function App() {
     <Route path='/register' element={<RegisterPage />}></Route>
     <Route element={<ProtectedRoute />}>
          <Route path='/dashboard' element={<DashboardPage />}></Route>
+         <Route path='/documents' element={<DocumnetListPage />}></Route>
+          <Route path='/document/:id' element={<DocumentPage />}></Route>
+          <Route path='/profile' element={<ProfilePage />}></Route>
     </Route>
     <Route path="*"  element={<Navigate to="/login" replace />} />
 </Routes>

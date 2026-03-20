@@ -28,7 +28,7 @@ const RegisterPage = () => {
       
      
     } finally {
-      setLoading(false)   // ✅ always reset loading
+      setLoading(false)   
     }
   }
 

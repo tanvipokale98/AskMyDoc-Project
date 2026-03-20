@@ -6,9 +6,9 @@ const client = new ChromaClient({
 
 const getCollection = async () => {
   const collection = await client.getOrCreateCollection({
-    name: "documents",         // collection name
+    name: "documents",         
     metadata: {
-      "hnsw:space": "cosine"  // cosine similarity — best for text
+      "hnsw:space": "cosine"  
     }
   })
   return collection;

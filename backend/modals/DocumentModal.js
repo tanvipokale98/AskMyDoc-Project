@@ -42,7 +42,7 @@ const DocumentSchema = new mongoose.Schema({
     },
    chunkCount: {
     type: Number,
-    default: 0        // set this after chunking is done
+    default: 0        
   },
     summary:{
         type:String,

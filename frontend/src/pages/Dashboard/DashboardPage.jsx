@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react'   // ✅ useEffect added
-import { Link } from 'react-router-dom'
+
+import { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'  
 import { Sidebar } from '../../components/SideBar'
 import { notify } from '../../utils/toast'
 import { privateApi } from '../../utils/api'
+import { DocForm } from '../../components/uploadDocForm'
 
 const DashboardPage = () => {
+  const navigate = useNavigate()  
   const [data, setData] = useState({
     totalDoc: 0,
     summarize: 0,
@@ -12,7 +15,7 @@ const DashboardPage = () => {
     recent: []
   })
   const [loading, setLoading] = useState(true)
-
+  const [showForm, setShowForm]= useState(false)
   const loadData = async () => {
     try {
       setLoading(true)
@@ -20,7 +23,7 @@ const DashboardPage = () => {
       setData({
         totalDoc:  resp.data.data.totalDoc,
         summarize: resp.data.data.summarize,
-        storage:   ((resp.data.data.storage) / (1024 * 1024)).toFixed(2), // ✅ fixed
+        storage:   ((resp.data.data.storage) / (1024 * 1024)).toFixed(2),
         recent:    resp.data.data.recent
       })
     } catch (err) {
@@ -50,14 +53,30 @@ const DashboardPage = () => {
       <Sidebar />
       <div className="flex-1 bg-[#f0fdff] min-h-screen p-8">
 
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-[#0f2d3d]">Dashboard</h1>
-          <p className="text-sm text-[#0e7490] mt-1">
-            Overview of your documents
-          </p>
+        {/* Header — with upload button */}
+        <div className="flex items-center justify-between mb-8">  
+          <div>
+            <h1 className="text-2xl font-bold text-[#0f2d3d]">Dashboard</h1>
+            <p className="text-sm text-[#0e7490] mt-1">Overview of your documents</p>
+          </div>
+          <button
+         
+             onClick={()=>{setShowForm(true)}}
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#0891b2] hover:bg-[#0e7490] active:scale-95 text-white text-sm font-medium rounded-lg transition-all"
+          >
+            ＋ Upload Document
+          </button>
         </div>
 
+      {showForm && (
+  <DocForm
+    onClose={() => setShowForm(false)}           
+    onSuccess={() => {
+      setShowForm(false)                         
+      loadData()                                 
+    }}
+  />
+)}
         {/* Stat Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           <div className="bg-white border border-[#a5f3fc] rounded-xl p-5">
@@ -91,23 +110,26 @@ const DashboardPage = () => {
             <h2 className="text-sm font-semibold text-[#0f2d3d] uppercase tracking-wide">
               Recent Documents
             </h2>
-            <Link
-              to="/docHistory"
-              className="text-xs text-[#0891b2] hover:underline"
-            >
+            <Link to="/documents" className="text-xs text-[#0891b2] hover:underline">
               View all →
             </Link>
           </div>
 
           {data.recent.length === 0 ? (
-            <p className="text-sm text-[#0e7490] text-center py-6">
-              No documents uploaded yet
-            </p>
+            <div className="text-center py-10">
+              <p className="text-sm text-[#0e7490] mb-3">No documents uploaded yet</p>
+              <button
+                onClick={() => navigate('/uploadChat')}
+                className="px-4 py-2 bg-[#0891b2] hover:bg-[#0e7490] text-white text-xs rounded-lg transition"
+              >
+                Upload your first document
+              </button>
+            </div>
           ) : (
             <div className="flex flex-col divide-y divide-[#e0f7fa]">
               {data.recent.map(ele => (
                 <div
-                  key={ele._id}                  // ✅ key not id
+                  key={ele._id}
                   className="flex items-center justify-between py-3"
                 >
                   <div className="flex items-center gap-3">
@@ -115,12 +137,8 @@ const DashboardPage = () => {
                       📄
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-[#0f4c5c]">
-                        {ele.title}
-                      </p>
-                      <p className="text-xs text-[#0e7490]">
-                        {ele.originalName}
-                      </p>
+                      <p className="text-sm font-medium text-[#0f4c5c]">{ele.title}</p>
+                      <p className="text-xs text-[#0e7490]">{ele.originalName}</p>
                       <p className="text-xs text-[#0e7490]">
                         {new Date(ele.createdAt).toLocaleDateString()}
                       </p>
@@ -136,12 +154,12 @@ const DashboardPage = () => {
                     }>
                       {ele.status}
                     </span>
-                    <Link
+                    {/* <Link
                       to={`/document/${ele._id}`}
                       className="text-xs text-[#0891b2] hover:underline"
                     >
                       View →
-                    </Link>
+                    </Link> */}
                   </div>
                 </div>
               ))}
