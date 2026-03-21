@@ -25,6 +25,7 @@ function App() {
     <Routes>
     <Route path='/login' element={<LoginPage />}></Route>
     <Route path='/register' element={<RegisterPage />}></Route>
+    <Route path="/" element={<Navigate to="/dashboard" replace />} />
     <Route element={<ProtectedRoute />}>
          <Route path='/dashboard' element={<DashboardPage />}></Route>
          <Route path='/documents' element={<DocumnetListPage />}></Route>
